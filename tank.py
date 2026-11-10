@@ -38,16 +38,17 @@ class Tank:
       self.targetAngle=0
 
 
-   def setVelocity(self,velocity):
-      self.wheelL.setVelocity(velocity)
-      self.wheelR.setVelocity(velocity)
+   def setHullVelocity(self,velocityL,velocityR):
+      self.wheelL.setVelocity(velocityL)
+      self.wheelR.setVelocity(velocityR)
+
+
+
 
    def getEncoderValues(self):
       return self.encoderL.getValue(), self.encoderR.getValue()
 
    def update(self):
-      self.gyro.update()
-      
       if self.tankState==TankState.IDLE:
          return
       if self.tankState==TankState.TURNING:
@@ -55,21 +56,25 @@ class Tank:
       if self.tankState==TankState.DRIVING:
          self.updateDrive()
 
-      
+   
 
    def updateTurn(self):
       error = self.targetAngle - self.gyro.get_angle()
+      
       if abs(error) < config.ACCEPTED_ANGLE:
+         print("done")
          self.tankState = TankState.IDLE
-         self.setVelocity(0)
+         self.setHullVelocity(0,0)
          return
       
       speed = config.KP_TURN * error
+      print("error: ",error," speed: ",round(speed, 2), end="")
       speed = max(-config.MAX_SPEED, min(config.MAX_SPEED, speed))
+      print("   speed: ",round(speed, 2), end="")
       speed = math.copysign(max(abs(speed), config.MIN_TURN_SPEED), speed)
+      print("   speed: ",round(speed, 2))
 
-      self.wheelL.setVelocity(-speed)
-      self.wheelR.setVelocity(speed)   
+      self.setHullVelocity(speed, -speed) 
 
 
    def updateDrive(self):
@@ -79,7 +84,7 @@ class Tank:
       errorR=self.targetRRad-self.currentRRad
 
       if abs(errorL)<config.ACCEPTED_OFFSET and abs(errorR)<config.ACCEPTED_OFFSET:
-         self.setVelocity(0)
+         self.setHullVelocity(0,0)
          self.tankState=TankState.IDLE
          print("done")
          return
@@ -91,8 +96,7 @@ class Tank:
       velocityR = config.KP_DRIVE * errorR
       velocityR = max(-config.MAX_SPEED, min(config.MAX_SPEED, velocityR))
 
-      self.wheelL.setVelocity(velocityL)
-      self.wheelR.setVelocity(velocityR)
+      self.setHullVelocity(velocityL, velocityR)
          
 
    def driveTiles(self,tileCount=1):

@@ -10,7 +10,7 @@ class Gyro:
         self.angle = 0.0
 
     def update(self):
-        angular_velocity = self.sensor.getValues()[1]
+        angular_velocity = -self.sensor.getValues()[1]
         self.angle += angular_velocity * self.dt
 
     def get_angle(self):

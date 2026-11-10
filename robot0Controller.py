@@ -29,6 +29,12 @@ import config
 # )
 
 
+
+
+
+
+
+
 #MY classes
 gyro = Gyro(robot,"gyro")
 maze= Maze()
@@ -40,17 +46,20 @@ SENSOR_NAMES = ["FL", "FR", "BL", "BR", "RB", "RF", "LB", "LF"]
 distance_sensors = Distance_sensors(robot, SENSOR_NAMES,config.TIME_STEP)
 
 #PREMENNE
-moveBuffer=["F","F","F","R","F","L","F"]
-moveBuffer=["L","F","F","R","F","F","L","F"]
+moveBuffer=["R","F","F","R","F","F","L","F","F","F","L","F","F","R","F","F","R","F","F","R","F","L","F"]
+
 bufferStep=""
 done=False
 
 startupSteps = 60 #about 2seconds of startup time for gyro to stabilize
 steps = 0
 
+
 while robot.step(config.TIME_STEP) != -1:
     tank.update()
+    gyro.update()
 
+    #startup pause for gyro to stabilize
     if steps < startupSteps:
         steps += 1
         continue
@@ -58,12 +67,11 @@ while robot.step(config.TIME_STEP) != -1:
         gyro.reset()
         steps+=1
         continue
-
-
- 
-
+    #----
 
     if tank.stateName()=="IDLE" and len(moveBuffer)!=0:
+        ##1 TILE CYCLE
+
         bufferStep=moveBuffer.pop(0)
         if bufferStep=="F":
             tank.driveTiles(1)
@@ -71,5 +79,8 @@ while robot.step(config.TIME_STEP) != -1:
             tank.TurnDeg(90)
         elif bufferStep=="L":
             tank.TurnDeg(-90)
-    
+        elif bufferStep=="U":
+            tank.TurnDeg(180)
+    else:
+        print(gyro.get_angle())
 
