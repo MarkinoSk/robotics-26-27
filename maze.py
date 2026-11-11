@@ -35,6 +35,7 @@ class Maze:
 
     def getTile(self,tile):
         return self.maze[tile.x,tile.y]
-    
-    
+
+    def updateMaze(self,sensorValues):
+        pass
     

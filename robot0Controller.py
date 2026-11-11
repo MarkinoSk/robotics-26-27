@@ -36,17 +36,16 @@ import config
 
 
 #MY classes
-gyro = Gyro(robot,"gyro")
+distance_sensors = Distance_sensors(robot)
 maze= Maze()
-tank=Tank(robot,"wLEFT motor","wRIGHT motor","wLEFT sensor","wRIGHT sensor",gyro,config.TIME_STEP)
+gyro = Gyro(robot,"gyro")
+tank=Tank(robot,"wLEFT motor","wRIGHT motor","wLEFT sensor","wRIGHT sensor",gyro)
 
 
-
-SENSOR_NAMES = ["FL", "FR", "BL", "BR", "RB", "RF", "LB", "LF"]
-distance_sensors = Distance_sensors(robot, SENSOR_NAMES,config.TIME_STEP)
 
 #PREMENNE
 moveBuffer=["R","F","F","R","F","F","L","F","F","F","L","F","F","R","F","F","R","F","F","R","F","L","F"]
+moveBuffer=["R","R","F"]
 
 bufferStep=""
 done=False
@@ -59,6 +58,12 @@ while robot.step(config.TIME_STEP) != -1:
     tank.update()
     gyro.update()
 
+    values = distance_sensors.get_centered_distances_rounded_cm()
+    # print("left: ",values["left"][0]," front: ",values["front"][0]," right: ",values["right"][0]," back: ",values["back"][0])
+    # print(((distance_sensors.get("LF")*0.3816575481)+0.026266765953)*100)
+
+
+    print(distance_sensors.get("LF"))
     #startup pause for gyro to stabilize
     if steps < startupSteps:
         steps += 1
@@ -69,18 +74,16 @@ while robot.step(config.TIME_STEP) != -1:
         continue
     #----
 
-    if tank.stateName()=="IDLE" and len(moveBuffer)!=0:
-        ##1 TILE CYCLE
+    # if tank.stateName()=="IDLE" and len(moveBuffer)!=0:
+    #     ##1 TILE CYCLE
+    #     bufferStep=moveBuffer.pop(0)
+    #     if bufferStep=="F":
+    #         tank.driveTiles(1)
+    #     elif bufferStep=="L":
+    #         tank.TurnDeg(-90)
+    #     elif bufferStep=="R":
+    #         tank.TurnDeg(90)
+    #     elif bufferStep=="B":
+    #         tank.TurnDeg(180)
 
-        bufferStep=moveBuffer.pop(0)
-        if bufferStep=="F":
-            tank.driveTiles(1)
-        elif bufferStep=="R":
-            tank.TurnDeg(90)
-        elif bufferStep=="L":
-            tank.TurnDeg(-90)
-        elif bufferStep=="U":
-            tank.TurnDeg(180)
-    else:
-        print(gyro.get_angle())
-
+        # maze.updateMaze(distance_sensors.get_all())

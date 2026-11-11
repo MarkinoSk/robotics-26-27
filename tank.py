@@ -11,7 +11,7 @@ class TankState(Enum):
 
 
 class Tank:
-   def __init__(self,robot,wheelL_name,wheelR_name,encoderL_name,encoderR_name,gyro,timestep):
+   def __init__(self,robot,wheelL_name,wheelR_name,encoderL_name,encoderR_name,gyro):
       self.wheelL=robot.getDevice(wheelL_name)
       self.wheelR=robot.getDevice(wheelR_name)
       self.wheelL.setPosition(float("inf"))
@@ -21,8 +21,8 @@ class Tank:
 
       self.encoderL=robot.getDevice(encoderL_name)
       self.encoderR=robot.getDevice(encoderR_name)
-      self.encoderL.enable(timestep)
-      self.encoderR.enable(timestep)
+      self.encoderL.enable(config.TIME_STEP)
+      self.encoderR.enable(config.TIME_STEP)
 
       self.gyro=gyro
 
