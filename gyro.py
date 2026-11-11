@@ -2,8 +2,8 @@ import math
 import config
 
 class Gyro:
-    def __init__(self, robot, name):
-        self.sensor = robot.getDevice(name)
+    def __init__(self, robot):
+        self.sensor = robot.getDevice("gyro")
         self.sensor.enable(config.TIME_STEP)
 
         self.dt = config.TIME_STEP / 1000.0

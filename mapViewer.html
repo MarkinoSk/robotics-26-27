@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maze Map Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #202124;
+            color: white;
+            margin: 20px;
+        }
+
+        #map {
+            width: 100%;
+            height: 75vh;
+            background: #303134;
+            border: 1px solid #555;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 8px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Rescue Maze Map</h2>
+
+<textarea id="data">[
+  {"x":0,"y":0,"colour":"red","visited":true,"created":true,"left":true,"right":true,"front":false,"back":false},
+  {"x":0,"y":1,"colour":null,"visited":false,"created":true,"back":false},
+  {"x":0,"y":-1,"colour":null,"visited":false,"created":true,"front":false}
+]</textarea>
+
+<button onclick="drawMap()">Render map</button>
+
+<br><br>
+
+<svg id="map"></svg>
+
+<script>
+const SIZE = 100;
+
+function drawMap() {
+    const tiles = JSON.parse(document.getElementById("data").value);
+    const svg = document.getElementById("map");
+
+    svg.innerHTML = "";
+
+    if (!tiles.length) return;
+
+    const minX = Math.min(...tiles.map(t => t.x));
+    const maxX = Math.max(...tiles.map(t => t.x));
+    const minY = Math.min(...tiles.map(t => t.y));
+    const maxY = Math.max(...tiles.map(t => t.y));
+
+    const padding = 40;
+    const width = (maxX - minX + 1) * SIZE + padding * 2;
+    const height = (maxY - minY + 1) * SIZE + padding * 2;
+
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+    function line(x1, y1, x2, y2) {
+        const l = document.createElementNS(
+            "http://www.w3.org/2000/svg", "line"
+        );
+
+        l.setAttribute("x1", x1);
+        l.setAttribute("y1", y1);
+        l.setAttribute("x2", x2);
+        l.setAttribute("y2", y2);
+        l.setAttribute("stroke", "white");
+        l.setAttribute("stroke-width", 5);
+        l.setAttribute("stroke-linecap", "square");
+
+        svg.appendChild(l);
+    }
+
+    for (const tile of tiles) {
+        const x = padding + (tile.x - minX) * SIZE;
+        const y = padding + (maxY - tile.y) * SIZE;
+
+        const rect = document.createElementNS(
+            "http://www.w3.org/2000/svg", "rect"
+        );
+
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", SIZE);
+        rect.setAttribute("height", SIZE);
+        rect.setAttribute("fill", tile.colour || "#555");
+        rect.setAttribute("fill-opacity", tile.visited ? 0.8 : 0.3);
+        rect.setAttribute("stroke", "#777");
+        rect.setAttribute("stroke-width", 1);
+
+        svg.appendChild(rect);
+
+        // Draw known walls
+        if (tile.front === true)
+            line(x, y, x + SIZE, y);
+
+        if (tile.back === true)
+            line(x, y + SIZE, x + SIZE, y + SIZE);
+
+        if (tile.left === true)
+            line(x, y, x, y + SIZE);
+
+        if (tile.right === true)
+            line(x + SIZE, y, x + SIZE, y + SIZE);
+
+        // Coordinates
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg", "text"
+        );
+
+        text.setAttribute("x", x + SIZE / 2);
+        text.setAttribute("y", y + SIZE / 2);
+        text.setAttribute("fill", "white");
+        text.setAttribute("font-size", 15);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("dominant-baseline", "middle");
+        text.textContent = `(${tile.x}, ${tile.y})`;
+
+        svg.appendChild(text);
+    }
+}
+
+drawMap();
+</script>
+
+</body>
+</html>

@@ -1,1 +1,58 @@
 matejov classfull code jou
+
+
+
+
+
+
+
+
+
+
+
+
+ked bola navstivena 
+    nic
+
+ked bola iba vytvorena
+    skontroluuj
+
+ked nebola vytvorena
+    vytvor
+    kontrola vedlajsich:
+        pre kazdu stranu:
+            ked nieje stena:
+                ked nebola tile za stenou vytvorena:
+                    pridaj, bez tej steny
+                ked bola ale nebola navstivena:
+                       nastavim aj stenu oproti
+
+
+            ked je stena:
+                pridaj stenu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+COLOR, DIRECTION,
+nefunguje druha tile
+
+

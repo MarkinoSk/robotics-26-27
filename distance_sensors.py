@@ -14,7 +14,7 @@ class Distance_sensors:
 
 
     def transform(self, rawValue):  ##INPUT IN METERS
-        # Distance from the sensor face in meters (weighted for close range)
+        #quadratic polynomial with a physical offset to turn a distorted sensor reading into an accurate distance from the center of your robot.
         #made with AI. I cant expain the math
         return (0.068571 * (rawValue ** 2) + 0.336188 * rawValue + 0.006627)  + config.TOF_OFFSET 
 
